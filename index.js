@@ -6,9 +6,10 @@ let NewsGrabber = require('./lib/newsGrabber');
 let NewsOutlet = require('./lib/news/google');
 
 let broker = new Broker('sn:topic');
-let store = new KeyValueStore('sn:crawl:news:symbols');
+let symbolStore = new KeyValueStore('sn:crawl:news:symbols');
+let publishedNewsStore = new KeyValueStore('sn:crawl:news:publishedNews');
 let newsOutlet = new NewsOutlet();
-let newsGrabber = new NewsGrabber(store, newsOutlet);
+let newsGrabber = new NewsGrabber(symbolStore, newsOutlet, publishedNewsStore);
  
 let messageBridge = new MessageBridge(broker, newsGrabber);
 messageBridge.start(() => {

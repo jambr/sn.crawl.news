@@ -6,11 +6,17 @@ let deride = require('deride');
 let async = require('async');
 
 describe('News Grabber', () => {
-  let newsGrabber, store, mockBroker, mockNewsOutlet, sampleArticles;
+  let newsGrabber, symbolStore, mockNewsOutlet, sampleArticles, publishedNewsStore;
+
+  before(() => {
+    symbolStore = new KeyValueStore('sn:test:crawl:news:symbols');
+    publishedNewsStore = new KeyValueStore('sn:test:crawl:news:publishedNews');
+  });
 
   beforeEach(() => {
-    store = new KeyValueStore('sn:test:crawl:news:symbols');
-    store.flush();
+    symbolStore.flush();
+    publishedNewsStore.flush();
+
     mockNewsOutlet = deride.stub(['newsFor']);
     sampleArticles = {
       'LON:VM': [{ 
@@ -34,13 +40,13 @@ describe('News Grabber', () => {
     };
 
     mockNewsOutlet.setup.newsFor.toCallbackWith(null, sampleArticles);
-    newsGrabber = new NewsGrabber(store, mockNewsOutlet, mockBroker);
+    newsGrabber = new NewsGrabber(symbolStore, mockNewsOutlet, publishedNewsStore);
   });
 
   it('should let me add symbols to watch', (done) => {
     newsGrabber.add('LON', 'VM', (err) => {
       should.ifError(err);
-      store.get('LON:VM', (err, thing) => {
+      symbolStore.get('LON:VM', (err, thing) => {
         should.ifError(err);
         thing.dateAdded.should.not.eql(null);
         done();
@@ -53,7 +59,7 @@ describe('News Grabber', () => {
       should.ifError(err);
       newsGrabber.remove('LON', 'VM', (err) => {
         should.ifError(err);
-        store.get('LON:VM', (err, thing) => {
+        symbolStore.get('LON:VM', (err, thing) => {
           should.ifError(err);
           should(thing).eql(null);
           done();
