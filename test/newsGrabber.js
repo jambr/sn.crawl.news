@@ -82,7 +82,7 @@ describe('News Grabber', () => {
         (next) => { newsGrabber.add('LON', 'VM', next); },
         (next) => { newsGrabber.add('LON', 'BARC', next); },
         (next) => { newsGrabber.grab(() => {
-          sampleArticles['LON:VM'][0].guid = 'some new guid indicating a new article';
+          sampleArticles['LON:VM'][0].link = 'some new link indicating a new article';
           next();
         }); },
         (next) => { newsGrabber.grab((err, news) => {
