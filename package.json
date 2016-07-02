@@ -48,6 +48,7 @@
   "dependencies": {
     "async": "^2.0.0-rc.6",
     "google-finance": "^0.1.4",
+    "sentiment": "^1.0.6",
     "sn.core": "jambr/sn.core.git#master"
   }
 }

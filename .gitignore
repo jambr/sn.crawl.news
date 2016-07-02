@@ -12,6 +12,7 @@ coverage/
 *.log
 *.zat
 
+test-results.xml
 checkstyle-result.xml
 coverage.*
 junit.xml
