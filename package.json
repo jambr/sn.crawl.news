@@ -2,22 +2,22 @@
   "name": "sn.crawl.news",
   "description": "Streams stock news as events.",
   "version": "0.1.0",
-  "homepage": "https://github.com/stocknet/crawl.news",
+  "homepage": "https://github.com/jambr/sn.crawl.news",
   "author": {
     "name": "Karl Stoney",
     "email": "karl@jambr.co.uk"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/stocknet/crawl.news.git"
+    "url": "git://github.com/jambr/sn.crawl.news.git"
   },
   "bugs": {
-    "url": "https://github.com/stocknet/crawl.news/issues"
+    "url": "https://github.com/jambr/sn.crawl.news/issues"
   },
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://github.com/stocknet/crawl.news/blob/master/LICENSE-MIT"
+      "url": "https://github.com/jambr/sn.crawl.news/blob/master/LICENSE-MIT"
     }
   ],
   "main": "index.js",
