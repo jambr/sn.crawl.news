@@ -1,16 +1,19 @@
 'use strict';
 let NewsGrabber = require('../lib/newsGrabber');
 let KeyValueStore = require('sn.core').Default.Store;
+let SentimentAnalysis = require('../lib/sentiment');
+
 let should = require('should');
 let deride = require('deride');
 let async = require('async');
 
 describe('News Grabber', () => {
-  let newsGrabber, symbolStore, mockNewsOutlet, sampleArticles, publishedNewsStore;
+  let newsGrabber, symbolStore, mockNewsOutlet, sampleArticles, publishedNewsStore, sentiment;
 
   before(() => {
     symbolStore = new KeyValueStore('sn:test:crawl:news:symbols');
     publishedNewsStore = new KeyValueStore('sn:test:crawl:news:publishedNews');
+    sentiment = new SentimentAnalysis();
   });
 
   beforeEach(() => {
@@ -40,7 +43,7 @@ describe('News Grabber', () => {
     };
 
     mockNewsOutlet.setup.newsFor.toCallbackWith(null, sampleArticles);
-    newsGrabber = new NewsGrabber(symbolStore, mockNewsOutlet, publishedNewsStore);
+    newsGrabber = new NewsGrabber(symbolStore, mockNewsOutlet, publishedNewsStore, sentiment);
   });
 
   it('should let me add symbols to watch', (done) => {
@@ -94,6 +97,17 @@ describe('News Grabber', () => {
         (next) => { newsGrabber.grab((err, news) => {
           // VM is the only one that has changed
           Object.keys(news).should.eql(['LON:VM']);
+          next();
+        }); }], done);
+  });
+
+  it('it should add sentiment', (done) => {
+    async.series([
+        (next) => { newsGrabber.add('LON', 'VM', next); },
+        (next) => { newsGrabber.add('LON', 'BARC', next); },
+        (next) => { newsGrabber.grab((err, news) => {
+          Object.keys(news['LON:VM'][0]).indexOf('sentiment').should.not.eql(-1);
+          should.ifError(err);
           next();
         }); }], done);
   });
