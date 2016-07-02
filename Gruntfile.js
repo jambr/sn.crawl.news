@@ -12,10 +12,20 @@ config.targets.all = config.targets.test.concat(config.targets.bin).concat(confi
 
 module.exports = function(grunt) {
 	grunt.initConfig({
+    env: {
+      all: {
+        MOCHA_FILE: 'shippable/testresults/tests.xml'
+      }
+    },
+    clean: ['shippable'],
 		mochaTest: {
 			test: {
 				options: {
-					reporter: 'spec',
+          reporter: 'mocha-multi',
+          reporterOptions: {
+            spec: '-',
+            'mocha-junit-reporter': '-' 
+          },
 					timeout: config.timeout,
 					require: config.require
 				},
@@ -34,10 +44,24 @@ module.exports = function(grunt) {
 				src: config.targets.all,
 				options: {
 					reporter: 'checkstyle',
-					reporterOutput: 'reports/jshint-checkstyle-result.xml'
+					reporterOutput: 'shippable/jshint/jshint-checkstyle-result.xml'
 				}
 			}
 		},
+    /* jshint camelcase:false */
+    mocha_istanbul: {
+      test: {
+        options: {
+          reporter: 'mocha-jenkins-reporter',
+          coverageFolder: 'shippable/codecoverage',
+          timeout: config.timeout,
+          require: config.require,
+          reportFormats: ['cobertura'],
+          quiet: true
+        },
+        src: config.targets.test
+      }
+    },
 		watch: {
 			files: config.targets.all,
 			tasks: ['default']
@@ -47,8 +71,11 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-mocha-test');
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-watch');
-	grunt.loadNpmTasks('grunt-notify');
+	grunt.loadNpmTasks('grunt-env');
+	grunt.loadNpmTasks('grunt-mocha-istanbul');
+  grunt.loadNpmTasks('grunt-contrib-clean');
 
 	// Default task.
-	grunt.registerTask('default', ['jshint:stdout', 'mochaTest']);
+	grunt.registerTask('default', ['env:all', 'clean', 'jshint:stdout', 'mochaTest']);
+	grunt.registerTask('ci', ['env:all', 'clean', 'jshint:checkstyle', 'mocha_istanbul', 'mochaTest']);
 };

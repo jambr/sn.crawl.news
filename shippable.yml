@@ -1,0 +1,8 @@
+node_js:
+  - "5.10.1"
+language: node_js
+services:
+  - rabbitmq
+  - redis
+after_script:
+  - npm run test 
