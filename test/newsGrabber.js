@@ -67,16 +67,29 @@ describe('News Grabber', () => {
         (next) => { newsGrabber.add('LON', 'VM', next); },
         (next) => { newsGrabber.add('LON', 'BARC', next); },
         (next) => { 
-          newsGrabber.start(100, (err, newss) => {
+          newsGrabber.start(100, (err, news) => {
             should.ifError(err);
             mockNewsOutlet.expect.newsFor.called.once();
-            newss.should.eql(sampleArticles);
+            news.should.eql(sampleArticles);
             newsGrabber.stop();
             next();
           });
         }], done);
   });
 
-  it.skip('shouldnt fire the tick handler for news that havent changed', () => {});
+  it('shouldnt fire the tick handler for news thats been sent already', (done) => {
+    async.series([
+        (next) => { newsGrabber.add('LON', 'VM', next); },
+        (next) => { newsGrabber.add('LON', 'BARC', next); },
+        (next) => { newsGrabber.grab(() => {
+          sampleArticles['LON:VM'][0].guid = 'some new guid indicating a new article';
+          next();
+        }); },
+        (next) => { newsGrabber.grab((err, news) => {
+          // VM is the only one that has changed
+          Object.keys(news).should.eql(['LON:VM']);
+          next();
+        }); }], done);
+  });
 
 });

@@ -35,7 +35,7 @@ describe('Message Bridge', () => {
   it('should publish price changes to the world', (done) => {
     mockNewsGrabber.setup.start.toDoThis((interval, handler) => {
       setTimeout(() => {
-        handler(null, ['some market news']);
+        handler(null, { 'LON:VM': ['some market news'] });
       }, 100);
     });
 
