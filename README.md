@@ -1,11 +1,11 @@
-# sn.crawl.market 
-Crawls stock market prices and publishes those events.
+# sn.crawl.news 
+Crawls stock news and publishes those articles.
 
 ## Getting Started
-Install the module with: `npm install crawl.market`
+Install the module with: `npm install crawl.news`
 
 ## Messages Published
-  - sn.market.value.update
+  - sn.news.article.create
 
 ## Worker Messages Subscribed To
   - sn.picker.symbol.create
