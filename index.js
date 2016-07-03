@@ -6,9 +6,10 @@ let NewsGrabber = require('./lib/newsGrabber');
 let NewsOutlet = require('./lib/news/google');
 let Sentiment = require('./lib/sentiment');
 
-let broker = new Broker('sn:topic');
-let symbolStore = new KeyValueStore('sn:crawl:news:symbols');
-let publishedNewsStore = new KeyValueStore('sn:crawl:news:publishedNews');
+let config = require('./config');
+let broker = new Broker('sn:topic', config.rabbitmq);
+let symbolStore = new KeyValueStore('sn:crawl:news:symbols', config.redis);
+let publishedNewsStore = new KeyValueStore('sn:crawl:news:publishedNews', config.redis);
 let newsOutlet = new NewsOutlet();
 let sentiment = new Sentiment();
 let newsGrabber = new NewsGrabber(symbolStore, newsOutlet, publishedNewsStore, sentiment);
