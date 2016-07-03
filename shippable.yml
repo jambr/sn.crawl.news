@@ -1,8 +1,28 @@
-node_js:
-  - "5.10.1"
+env:
+  global:
+    - REGISTRY=jambr
+    - SERVICE=sn.crawl.news
+
 language: node_js
+node_js:
+  - "6.2.2"
+
 services:
   - rabbitmq
   - redis
-after_script:
-  - npm run test 
+
+build:
+  pre_ci:
+    - docker build -t $REGISTRY/$SERVICE:latest .
+  ci:
+    - npm install 
+    - npm run test 
+  push:
+    - docker tag -f $REGISTRY/$SERVICE:latest $REGISTRY/$SERVICE:$BRANCH.$BUILD_NUMBER
+    - docker push $REGISTRY/$SERVICE:latest
+    - docker push $REGISTRY/$SERVICE:$BRANCH.$BUILD_NUMBER
+
+integrations:
+  hub:
+    - integrationName: "docker-hub"
+      type: docker
