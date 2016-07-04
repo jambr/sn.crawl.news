@@ -15,6 +15,10 @@ let sentiment = new Sentiment();
 let newsGrabber = new NewsGrabber(symbolStore, newsOutlet, publishedNewsStore, sentiment);
  
 let messageBridge = new MessageBridge(broker, newsGrabber);
-messageBridge.start(() => {
+messageBridge.start((err) => {
+  if(err) { 
+    console.log(err);
+    process.exit(1);
+  }
   console.log('News watch started...');
 });
